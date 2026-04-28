@@ -423,11 +423,91 @@
     </div>
 
     <script>
-        // OFFICIAL MyAnimeList CDN IMAGES - 100% WORKING
+        // MULTI-LAYER BACKUP IMAGE SYSTEM
+        const ANIME_BACKUPS = {
+            // Attack on Titan backups
+            'aot': [
+                'https://cdn.myanimelist.net/images/anime/10/117228.jpg',
+                'https://cdn.myanimelist.net/images/anime/4/112607.jpg',
+                'https://cdn.myanimelist.net/images/anime/1676/110025.jpg'
+            ],
+            // Demon Slayer backups
+            'demon': [
+                'https://cdn.myanimelist.net/images/anime/1107/110425.jpg',
+                'https://cdn.myanimelist.net/images/anime/1117/118181.jpg',
+                'https://cdn.myanimelist.net/images/anime/1380/118181.jpg'
+            ],
+            // One Piece backups
+            'onepiece': [
+                'https://cdn.myanimelist.net/images/anime/21/24022.jpg',
+                'https://cdn.myanimelist.net/images/anime/3/40228.jpg',
+                'https://cdn.myanimelist.net/images/anime/12/75243.jpg'
+            ],
+            // Jujutsu Kaisen backups
+            'jujutsu': [
+                'https://cdn.myanimelist.net/images/anime/1792/112269.jpg',
+                'https://cdn.myanimelist.net/images/anime/40748/225326.jpg',
+                'https://cdn.myanimelist.net/images/anime/44511/179937.jpg'
+            ],
+            // My Hero Academia backups
+            'hero': [
+                'https://cdn.myanimelist.net/images/anime/5/73623.jpg',
+                'https://cdn.myanimelist.net/images/anime/16498/18498.jpg',
+                'https://cdn.myanimelist.net/images/anime/35812/39849.jpg'
+            ],
+            // Death Note backups
+            'death': [
+                'https://cdn.myanimelist.net/images/anime/9/9453.jpg',
+                'https://cdn.myanimelist.net/images/anime/9/10872.jpg',
+                'https://cdn.myanimelist.net/images/anime/9/10873.jpg'
+            ]
+        };
+
+        const CHARACTER_BACKUPS = {
+            // Eren backups
+            'eren': [
+                'https://cdn.myanimelist.net/images/characters/5/404621.jpg',
+                'https://cdn.myanimelist.net/images/characters/2/277443.jpg',
+                'https://cdn.myanimelist.net/images/characters/13/501306.jpg'
+            ],
+            // Tanjiro backups
+            'tanjiro': [
+                'https://cdn.myanimelist.net/images/characters/15/603497.jpg',
+                'https://cdn.myanimelist.net/images/characters/2/603499.jpg',
+                'https://cdn.myanimelist.net/images/characters/11/603498.jpg'
+            ],
+            // Luffy backups
+            'luffy': [
+                'https://cdn.myanimelist.net/images/characters/3/56741.jpg',
+                'https://cdn.myanimelist.net/images/characters/5/104614.jpg',
+                'https://cdn.myanimelist.net/images/characters/6/104615.jpg'
+            ],
+            // Gojo backups
+            'gojo': [
+                'https://cdn.myanimelist.net/images/characters/4/497941.jpg',
+                'https://cdn.myanimelist.net/images/characters/14/497942.jpg',
+                'https://cdn.myanimelist.net/images/characters/3/497940.jpg'
+            ],
+            // Deku backups
+            'deku': [
+                'https://cdn.myanimelist.net/images/characters/4/101885.jpg',
+                'https://cdn.myanimelist.net/images/characters/14/101886.jpg',
+                'https://cdn.myanimelist.net/images/characters/3/101884.jpg'
+            ],
+            // Light backups
+            'light': [
+                'https://cdn.myanimelist.net/images/characters/3/28999.jpg',
+                'https://cdn.myanimelist.net/images/characters/11/28998.jpg',
+                'https://cdn.myanimelist.net/images/characters/4/28997.jpg'
+            ]
+        };
+
+        // Primary anime database (first image is primary)
         const animeDatabase = [
             {
                 title: "Attack on Titan",
                 rating: 9.8,
+                key: 'aot',
                 poster: "https://cdn.myanimelist.net/images/anime/10/117228.jpg",
                 free: "gogoanime",
                 premium: "crunchyroll",
@@ -436,6 +516,7 @@
             {
                 title: "Demon Slayer",
                 rating: 9.5,
+                key: 'demon',
                 poster: "https://cdn.myanimelist.net/images/anime/1107/110425.jpg",
                 free: "9anime",
                 premium: "funimation",
@@ -444,6 +525,7 @@
             {
                 title: "One Piece",
                 rating: 9.2,
+                key: 'onepiece',
                 poster: "https://cdn.myanimelist.net/images/anime/21/24022.jpg",
                 free: "gogoanime",
                 premium: "crunchyroll",
@@ -452,6 +534,7 @@
             {
                 title: "Jujutsu Kaisen",
                 rating: 9.7,
+                key: 'jujutsu',
                 poster: "https://cdn.myanimelist.net/images/anime/1792/112269.jpg",
                 free: "9anime",
                 premium: "crunchyroll",
@@ -460,6 +543,7 @@
             {
                 title: "My Hero Academia",
                 rating: 9.1,
+                key: 'hero',
                 poster: "https://cdn.myanimelist.net/images/anime/5/73623.jpg",
                 free: "gogoanime",
                 premium: "funimation",
@@ -468,6 +552,7 @@
             {
                 title: "Death Note",
                 rating: 9.4,
+                key: 'death',
                 poster: "https://cdn.myanimelist.net/images/anime/9/9453.jpg",
                 free: "9anime",
                 premium: "netflix",
@@ -475,12 +560,12 @@
             }
         ];
 
-        // OFFICIAL MyAnimeList CHARACTER IMAGES - PERFECT MATCHES
         const characterCards = [
             {
                 name: "Eren Yeager",
                 anime: "Attack on Titan",
                 rarity: "mythic",
+                key: 'eren',
                 image: "https://cdn.myanimelist.net/images/characters/5/404621.jpg",
                 attack: 98, defense: 92, speed: 95, magic: 88, health: 96
             },
@@ -488,6 +573,7 @@
                 name: "Tanjiro Kamado",
                 anime: "Demon Slayer",
                 rarity: "legendary",
+                key: 'tanjiro',
                 image: "https://cdn.myanimelist.net/images/characters/15/603497.jpg",
                 attack: 94, defense: 90, speed: 97, magic: 85, health: 98
             },
@@ -495,6 +581,7 @@
                 name: "Monkey D. Luffy",
                 anime: "One Piece",
                 rarity: "mythic",
+                key: 'luffy',
                 image: "https://cdn.myanimelist.net/images/characters/3/56741.jpg",
                 attack: 99, defense: 85, speed: 96, magic: 75, health: 100
             },
@@ -502,6 +589,7 @@
                 name: "Satoru Gojo",
                 anime: "Jujutsu Kaisen",
                 rarity: "mythic",
+                key: 'gojo',
                 image: "https://cdn.myanimelist.net/images/characters/4/497941.jpg",
                 attack: 100, defense: 98, speed: 99, magic: 100, health: 95
             },
@@ -509,6 +597,7 @@
                 name: "Izuku Midoriya",
                 anime: "My Hero Academia",
                 rarity: "epic",
+                key: 'deku',
                 image: "https://cdn.myanimelist.net/images/characters/4/101885.jpg",
                 attack: 92, defense: 88, speed: 94, magic: 96, health: 93
             },
@@ -516,12 +605,29 @@
                 name: "Light Yagami",
                 anime: "Death Note",
                 rarity: "rare",
+                key: 'light',
                 image: "https://cdn.myanimelist.net/images/characters/3/28999.jpg",
                 attack: 85, defense: 78, speed: 92, magic: 99, health: 82
             }
         ];
 
         let isSpinning = false;
+
+        // ADVANCED IMAGE LOADER WITH BACKUPS
+        function loadImageWithBackup(img, backups, index = 0) {
+            if (index >= backups.length) {
+                // Final fallback - anime-themed image
+                img.src = 'https://cdn.myanimelist.net/images/anime/10/117228.jpg';
+                return;
+            }
+            
+            img.src = backups[index];
+            img.onerror = () => loadImageWithBackup(img, backups, index + 1);
+            img.onload = () => {
+                img.style.opacity = '1';
+                img.classList.remove('image-loading');
+            };
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             displayAnime(animeDatabase);
@@ -543,9 +649,9 @@
                 <div class="anime-card">
                     <img src="${anime.poster}" 
                          alt="${anime.title} official poster"
-                         class="anime-poster"
+                         class="anime-poster image-loading"
+                         data-backup-key="${anime.key}"
                          loading="lazy"
-                         onerror="handleImageError(this, '${anime.title}')"
                          oncontextmenu="return false;">
                     <div class="anime-info">
                         <h3 class="anime-title">${anime.title}</h3>
@@ -560,11 +666,18 @@
                     </div>
                 </div>
             `).join('');
-        }
-
-        function handleImageError(img, title) {
-            img.src = `https://via.placeholder.com/350x500/2c3e50/ecf0f1/ffffff?text=${title.substring(0,3)}+MAL`;
-            img.style.objectFit = 'cover';
+            
+            // Initialize backup system for anime posters
+            document.querySelectorAll('.anime-poster').forEach(img => {
+                img.addEventListener('error', function() {
+                    const key = this.dataset.backupKey;
+                    if (ANIME_BACKUPS[key]) {
+                        loadImageWithBackup(this, ANIME_BACKUPS[key]);
+                    }
+                });
+                img.style.opacity = '0';
+                img.style.transition = 'opacity 0.3s ease';
+            });
         }
 
         function searchAnime() {
@@ -615,9 +728,9 @@
             container.innerHTML = `
                 <img src="${card.image}" 
                      alt="${card.name} official character portrait from ${card.anime}"
-                     class="character-image"
+                     class="character-image image-loading"
+                     data-backup-key="${card.key}"
                      loading="lazy"
-                     onerror="handleCharacterImageError(this, '${card.name}')"
                      oncontextmenu="return false;">
                 
                 <h3 class="character-name">${card.name}</h3>
@@ -641,10 +754,16 @@
             `;
             container.className = `character-card rarity-${card.rarity}`;
             container.style.display = 'block';
-        }
-
-        function handleCharacterImageError(img, name) {
-            img.src = `https://via.placeholder.com/200x260/34495e/ecf0f1/ffffff?text=${name.substring(0,3)}+MAL`;
+            
+            // Initialize character image backup
+            const charImg = container.querySelector('.character-image');
+            charImg.addEventListener('error', function() {
+                if (CHARACTER_BACKUPS[card.key]) {
+                    loadImageWithBackup(this, CHARACTER_BACKUPS[card.key]);
+                }
+            });
+            charImg.style.opacity = '0';
+            charImg.style.transition = 'opacity 0.3s ease';
         }
 
         function collectCard(name) {
