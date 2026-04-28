@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeHub - Ultimate Anime Database</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(0,0,0,0.8);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: #4ecdc4;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .search-box {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-box input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .search-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .search-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            transform: translateY(-2px);
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .anime-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .anime-poster {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+
+        .anime-info {
+            padding: 1.5rem;
+        }
+
+        .anime-title {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            color: #ffd700;
+        }
+
+        .rating span {
+            color: white;
+            font-weight: bold;
+        }
+
+        .watch-links {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .watch-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .free { background: #4ecdc4; color: white; }
+        .premium { background: #ff6b6b; color: white; }
+
+        .card-wheel-section {
+            text-align: center;
+            margin: 4rem 0;
+        }
+
+        .wheel-container {
+            width: 400px;
+            height: 400px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .wheel segment {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        .spin-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 2rem;
+            transition: all 0.3s;
+        }
+
+        .spin-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .spin-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .character-card {
+            background: rgba(0,0,0,0.8);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 350px;
+            margin: 2rem auto;
+            border: 3px solid;
+            display: none;
+        }
+
+        .rarity-common { border-color: #ccc; }
+        .rarity-rare { border-color: #4ecdc4; }
+        .rarity-epic { border-color: #9b59b6; }
+        .rarity-legendary { border-color: #f39c12; }
+        .rarity-mythic { border-color: #e74c3c; }
+
+        .character-image {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin: 0 auto 1rem;
+            display: block;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat {
+            background: rgba(255,255,255,0.1);
+            padding: 0.8rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1440deg); }
+        }
+
+        .spinning {
+            animation: spin 4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">🎌 AnimeHub</div>
+        <nav class="nav">
+            <a href="#home">Home</a>
+            <a href="#anime">Anime</a>
+            <a href="#cards">Card Wheel</a>
+            <a href="#collection">My Collection</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Discover Your Next Favorite Anime</h1>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search anime, characters...">
+                <button class="search-btn" onclick="searchAnime()">🔍 Search</button>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="showTab('popular')">Popular</button>
+            <button class="tab-btn" onclick="showTab('top-rated')">Top Rated</button>
+            <button class="tab-btn" onclick="showTab('new')">New Releases</button>
+        </div>
+
+        <div id="animeContent">
+            <div class="anime-grid" id="animeGrid">
+                <!-- Anime cards will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div id="cardWheelSection" class="card-wheel-section" style="display: none;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">🎰 Anime Card Wheel</h2>
+            <p style="margin-bottom: 2rem; opacity: 0.9;">Spin to collect rare anime character cards!</p>
+            <div class="wheel-container">
+                <div class="wheel" id="wheel" onclick="spinWheel()">
+                    <div class="segment" style="background: linear-gradient(45deg, #ccc, #aaa); transform: rotate(0deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #4ecdc4, #45b7aa); transform: rotate(45deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #9b59b6, #8e44ad); transform: rotate(90deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #f39c12, #e67e22); transform: rotate(135deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #e74c3c, #c0392b); transform: rotate(180deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #ccc, #aaa); transform: rotate(225deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #4ecdc4, #45b7aa); transform: rotate(270deg);"></div>
+                    <div class="segment" style="background: linear-gradient(45deg, #9b59b6, #8e44ad); transform: rotate(315deg);"></div>
+                </div>
+            </div>
+            <button class="spin-btn" id="spinBtn" onclick="spinWheel()">SPIN FOR CARD!</button>
+            <div id="characterCard" class="character-card"></div>
+        </div>
+    </div>
+
+    <script>
+        // Anime Database
+        const animeDatabase = [
+            {
+                id: 1,
+                title: "Attack on Titan",
+                rating: 9.8,
+                poster: "https://via.placeholder.com/300x400/8B0000/FFFFFF?text=AOT",
+                free: "gogoanime", premium: "crunchyroll",
+                description: "Humanity fights giant Titans in a post-apocalyptic world."
+            },
+            {
+                id: 2,
+                title: "Demon Slayer",
+                rating: 9.5,
+                poster: "https://via.placeholder.com/300x400/FF4500/FFFFFF?text=DS",
+                free: "9anime", premium: "funimation",
+                description: "Tanjiro becomes a demon slayer to save his sister."
+            },
+            {
+                id: 3,
+                title: "One Piece",
+                rating: 9.2,
+                poster: "https://via.placeholder.com/300x400/FFD700/000000?text=OP",
+                free: "gogoanime", premium: "crunchyroll",
+                description: "Luffy searches for the ultimate treasure One Piece."
+            },
+            {
+                id: 4,
+                title: "Jujutsu Kaisen",
+                rating: 9.7,
+                poster: "https://via.placeholder.com/300x400/9932CC/FFFFFF?text=JJk",
+                free: "9anime", premium: "crunchyroll",
+                description: "Yuji fights curses after eating Sukuna's finger."
+            },
+            {
+                id: 5,
+                title: "My Hero Academia",
+                rating: 9.1,
+                poster: "https://via.placeholder.com/300x400/4169E1/FFFFFF?text=MHA",
+                free: "gogoanime", premium: "funimation",
+                description: "Izuku becomes a hero in a world of superpowers."
+            },
+            {
+                id: 6,
+                title: "Death Note",
+                rating: 9.4,
+                poster: "https://via.placeholder.com/300x400/000000/FFFFFF?text=DN",
+                free: "9anime", premium: "netflix",
+                description: "Light uses a Death Note to kill criminals."
+            }
+        ];
+
+        // Character Card Database
+        const characterCards = [
+            { name: "Eren Yeager", anime: "Attack on Titan", rarity: "legendary", image: "https://via.placeholder.com/150x200/8B0000/FFFFFF?text=Eren", 
+              attack: 95, defense: 85, speed: 88, magic: 70, health: 90 },
+            { name: "Tanjiro Kamado", anime: "Demon Slayer", rarity: "mythic", image: "https://via.placeholder.com/150x200/FF4500/FFFFFF?text=Tanjiro", 
+              attack: 92, defense: 88, speed: 94, magic: 65, health: 96 },
+            { name: "Monkey D. Luffy", anime: "One Piece", rarity: "mythic", image: "https://via.placeholder.com/150x200/FFD700/000000?text=Luffy", 
+              attack: 98, defense: 75, speed: 92, magic: 40, health: 99 },
+            { name: "Gojo Satoru", anime: "Jujutsu Kaisen", rarity: "mythic", image: "https://via.placeholder.com/150x200/9932CC/FFFFFF?text=Gojo", 
+              attack: 99, defense: 95, speed: 97, magic: 100, health: 92 },
+            { name: "Deku", anime: "My Hero Academia", rarity: "epic", image: "https://via.placeholder.com/150x200/4169E1/FFFFFF?text=Deku", 
+              attack: 89, defense: 82, speed: 90, magic: 85, health: 88 },
+            { name: "Light Yagami", anime: "Death Note", rarity: "rare", image: "https://via.placeholder.com/150x200/000000/FFFFFF?text=Light", 
+              attack: 70, defense: 60, speed: 85, magic: 98, health: 75 },
+            { name: "Naruto Uzumaki", anime: "Naruto", rarity: "legendary", image: "https://via.placeholder.com/150x200/FF8C00/FFFFFF?text=Naruto", 
+              attack: 96, defense: 88, speed: 92, magic: 80, health: 95 }
+        ];
+
+        let currentTab = 'popular';
+        let isSpinning = false;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            displayAnime(animeDatabase);
+            updateWheelSegments();
+        });
+
+        function showTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            let filteredAnime = animeDatabase;
+            if (tab === 'top-rated') {
+                filteredAnime = animeDatabase.sort((a, b) => b.rating - a.rating);
+            } else if (tab === 'new') {
+                filteredAnime = animeDatabase.slice(0, 4);
+            }
+            
+            displayAnime(filteredAnime);
+        }
+
+        function displayAnime(animeList) {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = animeList.map(anime => `
+                <div class="anime-card">
+                    <img src="${anime.poster}" alt="${anime.title}" class="anime-poster">
+                    <div class="anime-info">
+                        <h3 class="anime-title">${anime.title}</h3>
+                        <div class="rating">
+                            <span>★</span><span>${anime.rating}/10</span>
+                        </div>
+                        <div class="watch-links">
+                            <button class="watch-btn free" onclick="openStream('${anime.free}')">Free</button>
+                            <button class="watch-btn premium" onclick="openStream('${anime.premium}')">Premium</button>
+                        </div>
+                        <p style="font-size: 0.9rem; opacity: 0.9;">${anime.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchAnime() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = animeDatabase.filter(anime => 
+                anime.title.toLowerCase().includes(query)
+            );
+            displayAnime(filtered);
+        }
+
+        function openStream(platform) {
+            const platforms = {
+                gogoanime: 'https://gogoanime.gg',
+                '9anime': 'https://9anime.to',
+                crunchyroll: 'https://crunchyroll.com',
+                funimation: 'https://funimation.com',
+                netflix: 'https://netflix.com'
+            };
+            window.open(platforms[platform], '_blank');
+        }
+
+        function updateWheelSegments() {
+            const rarities = ['common', 'rare', 'epic', 'legendary', 'mythic'];
+            const wheel = document.getElementById('wheel');
+            // Visual update for wheel segments
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const spinBtn = document.getElementById('spinBtn');
+            spinBtn.disabled = true;
+            spinBtn.textContent = 'SPINNING...';
+            
+            const wheel = document.getElementById('wheel');
+            const randomRotation = Math.floor(Math.random() * 360) + 1440; // 4+ full rotations
+            wheel.style.transform = `rotate(${randomRotation}deg)`;
+            wheel.classList.add('spinning');
+
+            setTimeout(() => {
+                wheel.classList.remove('spinning');
+                const normalizedRotation = randomRotation % 360;
+                const segmentIndex = Math.floor((normalizedRotation + 22.5) / 45) % 8;
+                const cardIndex = Math.min(segmentIndex, characterCards.length - 1);
+                showCharacterCard(characterCards[cardIndex]);
+                
+                isSpinning = false;
+                spinBtn.disabled = false;
+                spinBtn.textContent = 'SPIN FOR CARD!';
+            }, 4000);
+        }
+
+        function showCharacterCard(card) {
+            const cardElement = document.getElementById('characterCard');
+            cardElement.className = `character-card rarity-${card.rarity}`;
+            cardElement.innerHTML = `
+                <img src="${card.image}" alt="${card.name}" class="character-image">
+                <h3 style="text-align: center; margin-bottom: 1rem;">${card.name}</h3>
+                <div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 1rem;">
+                    ${card.anime} - <span style="color: #ffd700; text-transform: uppercase; font-weight: bold;">${card.rarity}</span>
+                </div>
+                <div class="stats">
+                    <div class="stat">⚔️ Attack<br><span style="font-size: 1.2rem; font-weight: bold;">${card.attack}</span></div>
+                    <div class="stat">🛡️ Defense<br><span style="font-size: 1.2rem; font-weight: bold;">${card.defense}</span></div>
+                    <div class="stat">⚡ Speed<br><span style="font-size: 1.2rem; font-weight: bold;">${card.speed}</span></div>
+                    <div class="stat">✨ Magic<br><span style="font-size: 1.2rem; font-weight: bold;">${card.magic}</span></div>
+                    <div class="stat" style="grid-column: span 2;">❤️ Health<br><span style="font-size: 1.2rem; font-weight: bold;">${card.health}</span></div>
+                </div>
+                <button class="watch-btn free" style="width: 100%; margin-top: 1rem;" onclick="collectCard('${card.name}')">Add to Collection</button>
+            `;
+            cardElement.style.display = 'block';
+        }
+
+        function collectCard(name) {
+            alert(`🎉 Added ${name} to your collection!`);
+        }
+
+        // Tab switching for card wheel
+        document.querySelectorAll('.nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = this.getAttribute('href');
+                if (target === '#cards') {
+                    document.getElementById('animeContent').style.display = 'none';
+                    document.getElementById('cardWheelSection').style.display = 'block';
+                } else {
+                    document.getElementById('animeContent').style.display = 'block';
+                    document.getElementById('cardWheelSection').style.display = 'none';
+                }
+            });
+        });
+
+        // Search on Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchAnime();
+            }
+        });
+    </script>
+</body>
+</html>
